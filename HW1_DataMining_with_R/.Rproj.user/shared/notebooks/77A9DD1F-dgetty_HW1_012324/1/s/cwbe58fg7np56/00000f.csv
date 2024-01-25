@@ -1,0 +1,5 @@
+"0","# build path to titanic.csv"
+"0","tit_file <- file.path(""titanic.csv"")"
+"0","# Build data frame from the data set."
+"0","passengers <- read.delim(tit_file, header = TRUE, sep = ',')"
+"0",""
