@@ -1,0 +1,119 @@
+---
+title: "CSC 587 HW 2"
+author: "Daniel R. Getty"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+## Set Environment
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE)
+# directory
+dir <- 'G:\\My Drive\\H Drive\\Course Work\\CERG-Data Science\\CSC_587_Advanced_Data_Mining\\HW\\HW2_DataMining_with_py'
+# Set the working directory.
+setwd(dir)
+# Print the working directory.
+getwd()
+# load ggplot2 package
+library(ggplot2)
+```
+
+## Homework 1
+
+1: Find the distance between objects 1 and 3 by using the formula provided on the slides. Notice that we have mixed type of attributes. 
+
+```{r 1}
+data1 <- read.table( header=T, text='
+  ObjectIdentifier test1.nominal test2.ordinal test3.numeric
+  1 A excellent 45
+  2 B fair 22
+  3 C good 64
+  4 A excellent 28')
+
+```
+
+```{r 1} 
+```
+
+
+2: Write a program in any language which can compute Manhattan and Euclidean distances between any two given vectors with any length. You can pass the length to your function, but please don’t limit the dimension to 2. You can test
+your function on vectors you fill in your code without asking user input. 
+
+
+```{r 2}
+
+```
+
+3: In the table below, determine whether passing a class has a dependency on attendance by using Chi-square test.
+Please refer to the formula in the slides.  (For the expected value for each cell, multiply the total counts in the rows and columns of the cell and divide by total count. For example: Expected value for Attended-Pass=33*31/54 = 18.94. You can scan and submit your handwritten calculation)
+
+
+```{r 3}
+
+```
+
+4: In R, there is a built-in data frame called mtcars. Please calculate the correlation between mpg and wt attributes of mtcars by using cor() function. Then generate scatter plot based on these two attributes. Your scatter plot should be like the one below. You don’t need to submit the image, but R script should be submitted
+
+```{r 4}
+
+
+```
+
+5: Grad Students Only Write an R or Python script which removes or drops the columns which have more than 75%
+missing values. Then it should replace the missing values in the remaining columns with the median value of the
+1existing values of that particular column. Download metabolite.csv from Google Drive and use this data set to test your
+code. Please check the end of this document for some useful R examples and hints.
+
+```{r 5}
+
+```
+
+
+6: Grad Students Only Please apply PCA on the processed metabolites data and create a scatter plot by using first two
+principal components in which points are colored based on the Label column. Please submit your code along with
+your figure in the same file.  
+
+(If you are going to use R, you may need to use which(), is.na() functions and consider excluding those columns by name. For that purpose you may investigate %in% and -c(...) type of operations. You can also see examples of subsetting a dataframe below with their outputs. It’s also recommended to check tidyverse library.)
+
+
+```{r 6}
+data <- read.table( header=T, text='
+  subject sex size
+  1 M 7
+  2 F 6
+  3 F 9
+  4 m 11')
+
+subset(data, subject < 3)
+
+data[data$subject < 3, ]
+
+# Subset of particular rows and columns
+subset(data, subject < 3, select = -subject)
+
+subset(data, subject < 3, select = c(sex,size))
+
+subset(data, subject < 3, select = sex:size)
+
+data[data$subject < 3, c("sex","size")]
+
+# Logical AND of two conditions
+subset(data, subject < 3 & sex=="M")
+
+data[data$subject < 3 & data$sex=="M", ]
+ 
+# Logical OR of two conditions
+subset(data, subject < 3 | sex=="M")
+
+data[data$subject < 3 | data$sex=="M", ]
+ 
+# Condition based on transformed data
+subset(data, log2(size) > 3 )
+ 
+data[log2(data$size) > 3, ]
+ 
+# Subset if elements are in another vector
+subset(data, subject %in% c(1,3))
+
+data[data$subject %in% c(1,3), ]
+ 
+```

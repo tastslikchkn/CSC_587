@@ -1,0 +1,133 @@
+---
+title: "CSC 587 HW 1"
+author: "Daniel R. Getty"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+## Set Environment
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE)
+# directory
+dir <- 'G:\\My Drive\\H Drive\\Course Work\\CERG-Data Science\\CSC_587_Advanced_Data_Mining\\HW\\HW1_DataMining_with_R'
+# Set the working directory.
+setwd(dir)
+# Print the working directory.
+getwd()
+# load ggplot2 package
+library(ggplot2)
+```
+
+## Homework 1
+1.a: Use read.delim function to read Su_raw_matrix.txt into a variable called 
+su.(Notice that su has become a data frame now) Load in the data set from disk.
+```{r 1.a }
+data_file <- file.path('Su_raw_matrix.txt')
+# Build data frame from the data set.
+su <- read.delim(data_file, header = TRUE, sep = '\t')
+# Print the data frame.
+su
+```
+1.b: Use mean and sd functions to find mean and standard deviation of 
+```{r 1.b Starndard Deviation}
+sd(su$Liver_2.CEL)
+```
+
+```{r 1.b Mean}
+mean(su$Liver_2.CEL)
+```
+
+1.c: Use colMeans and colSums functions to get the average and total values of 
+each column.
+
+Column Means
+```{r 1.c Coumn Means}
+colMeans(su[, -1])  # Exclude the first column
+```
+Column Sums
+```{r 1.c Column Sums}
+colSums(su[, -1])  # Exclude the first Column
+```
+
+2. Use rnorm(n, mean = 0, sd = 1) function to generate 10000 numbers for the following(mean, sigma) pairs and plot histogram for each, meaning you need to 
+change the function parameter accordingly. Then comment on how these histograms 
+are different from each other and state the reason. Please save your figures as 
+image from RStudio. (Hint: to see the difference in plots you may need to set 
+the xlim parameter in plot function to c(-5,5))
+
+2.a: mean = 0, sigma = 0.2
+```{r 2.a: mean = 0, sigma = 0.2}
+hist(rnorm(10000, mean = 0, sd = 0.2),xlim = c(-5,5))
+
+```
+
+2.b: mean = 0, sigma = 0.5
+```{r 2.b: mean = 0, sigma = 0.5} 
+hist(rnorm(10000, mean = 0, sd = 0.5),xlim = c(-5,5))
+```
+The difference between the two histograms is the standard deviation. The first
+being 0.2 and the second 0.5. "Standard Deviation (sigma,or σ) is a measure of 
+how dispersed the data is in relation to the mean. Low, or small, standard 
+deviation indicates data are clustered tightly around the mean, and high, or 
+large, standard deviation indicates data are more spread out. A standard 
+deviation close to zero indicates that data points are very close to the mean, whereas a larger standard deviation indicates data points are spread further 
+away from the mean." (https://www.nlm.nih.gov/oet/ed/stats/02-900.html)
+
+3. Perform the steps below with ”dat” dataframe which is just a sample data for 
+you to observe how each plot function ( 3b through 3e ) works. Notice that you 
+need to have ggplot2 library installed on your system. Please refer slides how
+to install and import a library. Installation is done only once, but you need to import the library every time you need it by saying library(ggplot2). Then run 
+the following commands for questions from 3a through 3e and observe how the 
+plots are generated first. 
+
+3.a: 
+```{r 3.a}
+dat <- data.frame(cond = factor(rep(c("A","B"), each=200)), rating = c(rnorm(200),rnorm(200, mean=.8)))
+```
+
+3.b: Overlaid histograms
+```{r 3.b}
+ggplot(dat, aes(x=rating, fill=cond)) + geom_histogram(binwidth=.5, alpha=.5, position="identity")
+```
+3.c: Interleaved Histograms
+```{r 3.c}
+ggplot(dat, aes(x=rating, fill=cond)) + geom_histogram(binwidth=.5, position="dodge")
+```
+
+3.d: Density plots
+```{r 3.d}
+ggplot(dat, aes(x=rating, colour=cond)) + geom_density()
+
+```
+
+3.e: Density plots with semitransparent fill
+```{r 3.e}
+ggplot(dat, aes(x=rating, fill=cond)) + geom_density(alpha=.3)
+```
+
+3.f: Read ”diabetes_train.csv” into a variable called diabetes and apply the same functions 3b through 3e for the mass attribute of diabetes and save the images. (Hint: instead of cond above, use the class attribute to color your groups. When 
+you have fill option, your plots should show same type of chart for both groups 
+in different colors on the same figure. Keep in mind that diabetes and dat are 
+both DataFrames)
+
+Load Diabetes Data
+```{r 3.f}
+diabetes_fp <- file.path('diabetes.csv')
+# Build data frame from the data set.
+diabetes <- read.csv(diabetes_fp, header = TRUE, sep = ',')
+
+dat <- data.frame(cond = factor(rep(c("A","B"), each=200)), rating = c(rnorm(200),rnorm(200, mean=.8)))
+
+pregmean <- mean(diabetes$Pregnancies)
+pregsd <- sd(diabetes$Pregnancies)
+rnormpreg=rnorm(diabetes$Pregnancies, mean=pregmean, sd=pregsd)
+
+dbpreg <- data.frame(preg = diabetes$Pregnancies, rnormpreg, outcome=diabetes$Outcome)
+
+dbpreg
+```
+Overlaid histograms
+```{r 3.f}
+# ggplot(dat, aes(x=rating, fill=cond)) + geom_histogram(binwidth=.5, alpha=.5, position="identity")
+
+ggplot(dbpreg, aes(x=rnormpreg, fill=outcome)) + geom_histogram(binwidth=.5, alpha=.5, position="identity")
+```
