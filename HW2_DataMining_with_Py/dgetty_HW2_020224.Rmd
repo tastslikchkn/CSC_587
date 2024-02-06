@@ -2,10 +2,13 @@
 title: "CSC 587 HW 2"
 author: "Daniel R. Getty"
 date: "`r Sys.Date()`"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
-## Set Environment
-```{r setup, include=TRUE}
+## Set r Environment
+```{r rsetup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE, message = TRUE)
 # directory
 dir <- 'G:\\My Drive\\H Drive\\Course Work\\CERG-Data Science\\CSC_587_Advanced_Data_Mining\\HW\\HW2_DataMining_with_py'
@@ -15,105 +18,159 @@ setwd(dir)
 getwd()
 # load ggplot2 package
 library(ggplot2)
+# load ggplot2 package
+library(ggplot2)
+# load dplyr package
+library(dplyr)
+# load tidyr package
+library(tidyr)
+```
+
+## Set py Environment
+```{python psetup, include=TRUE}
+import os
+import pandas as pd
+import numpy as np
+import math
 ```
 
 ## Homework 1
 
 1: Find the distance between objects 1 and 3 by using the formula provided on the slides. Notice that we have mixed type of attributes. 
 
-```{r 1}
-data1 <- read.table( header=T, text='
-  ObjectIdentifier test1.nominal test2.ordinal test3.numeric
-  1 A excellent 45
-  2 B fair 22
-  3 C good 64
-  4 A excellent 28')
+```{python 1}
+# Using Python
+# Create a dictionary of data
+data1py = {
+    'ObjectIdentifier': [1, 2, 3, 4],
+    'test1.nominal': ['A', 'B', 'C', 'A'],
+    'test2.ordinal': ['excellent', 'fair', 'good', 'excellent'],
+    'test3.numeric': [45, 22, 64, 28]
+}
+# Create a DataFrame from the dictionary
 
+type(data1py)
+v1a = data1py['test3.numeric'][0]
+v1b = data1py['test3.numeric'][2]
+v1c = data1py['ObjectIdentifier']
+v1d = data1py['test3.numeric']
+print ('v1a =',v1a)
+print ('v1b =',v1b)
+print ('v1c =',v1c)
+print ('v1d =',v1d)
+
+manhattan = abs(v1a - v1b)
+euclidian = math.sqrt((v1a - v1b) ** 2)
+print('Manhattan =',manhattan)
+print('Euclidian =',euclidian)
 ```
 
-```{r 1} 
-```
 
+2: Write a program in any language which can compute Manhattan and Euclidean distances between any two given vectors with any length. You can pass the length to your function, but please don’t limit the dimension to 2. You can test your function on vectors you fill in your code without asking user input. 
 
-2: Write a program in any language which can compute Manhattan and Euclidean distances between any two given vectors with any length. You can pass the length to your function, but please don’t limit the dimension to 2. You can test
-your function on vectors you fill in your code without asking user input. 
+```{python 2} 
+# Using Python
+def distance(v1, v2):
+    # Manhattan distance is taxicab distance, the sum of the absolute differences between the coordinates of the points
+    manhatten = sum(abs(a1 - b1) for a1, b1 in zip(v1, v2))
+    # Euclidean distance is strait line distance
+    euclidian = math.sqrt(sum((a2 - b2) ** 2 for a2, b2 in zip(v1, v2)))
+    # Hamming distance is used for categorical data
+    hamming = sum(a3 != b3 for a3, b3 in zip(v1, v2))
+    # Cosine distance is used to find similarity between data points
+    cosine = sum(a4 * b4 for a4, b4 in zip(v1, v2)) / (math.sqrt(sum(a4 ** 2 for a4 in v1)) * math.sqrt(sum(b4 ** 2 for b4 in v2)))
+    print("Manhattan distance:", manhatten)
+    print("Euclidean distance:", euclidian)
+    print("Hamming distance:", hamming)
+    print("Cosine distance:", cosine)
 
+# Define two vectors
+v1 = v1c 
+v2 = v1d 
 
-```{r 2}
-
+# Call  the function
+dis = distance(v1, v2)
 ```
 
 3: In the table below, determine whether passing a class has a dependency on attendance by using Chi-square test.
 Please refer to the formula in the slides.  (For the expected value for each cell, multiply the total counts in the rows and columns of the cell and divide by total count. For example: Expected value for Attended-Pass=33*31/54 = 18.94. You can scan and submit your handwritten calculation)
 
 
-```{r 3}
+```{python 3}
+# Using Python
+# Create a DataFrame
+df = pd.DataFrame({
+    'Attended': [25, 6, 31],
+    'Skipped': [8, 15, 23],
+}, index=['Passed', 'Failed', 'Total'])
 
+# Calculate row and column totals
+row_totals = df.loc[:, 'Attended':'Skipped'].sum(axis=1)
+col_totals = df.loc['Total', :]
+
+# Calculate grand total
+grand_total = df.loc['Total', 'Attended':'Skipped'].sum()
+
+# Calculate expected values for each cell
+expected_values = pd.DataFrame()
+for row in ['Passed', 'Failed']:
+    for col in ['Attended', 'Skipped']:
+        expected_values.loc[row, col] = (row_totals[row] * col_totals[col]) / grand_total
+expected_values = round(expected_values,2)
+
+# print the DataFrames
+print("The DataFrame is:")
+print(df, '\n')
+print("The Expected Values are:")
+print(expected_values)
 ```
 
 4: In R, there is a built-in data frame called mtcars. Please calculate the correlation between mpg and wt attributes of mtcars by using cor() function. Then generate scatter plot based on these two attributes. Your scatter plot should be like the one below. You don’t need to submit the image, but R script should be submitted
 
 ```{r 4}
+# Using R
+# Load the mtcars data
+data(mtcars)
+# Calculate the correlation between mpg and wt
+cor(mtcars$mpg, mtcars$wt)
+# Generate scatter plot
+plot(mtcars$wt, mtcars$mpg, xlab='weight', ylab='Miles per Gallon', main='Scatter Plot of Miles per Gallon and Weight')
 
 
 ```
 
-5: Grad Students Only Write an R or Python script which removes or drops the columns which have more than 75%
-missing values. Then it should replace the missing values in the remaining columns with the median value of the
-1existing values of that particular column. Download metabolite.csv from Google Drive and use this data set to test your
-code. Please check the end of this document for some useful R examples and hints.
+5: Grad Students Only Write an R or Python script which removes or drops the columns which have more than 75% missing values. Then it should replace the missing values in the remaining columns with the median value of the 1existing values of that particular column. Download metabolite.csv from Google Drive and use this data set to test your code. Please check the end of this document for some useful R examples and hints.
 
 ```{r 5}
-
+#` Using R
+# Load the metabolite data
+data_file <- file.path('metabolite.csv')
+# Build data frame from the data set.
+metabolite <-read.csv(data_file, header = TRUE, sep = ',')
+# Print the data frame.
+#glimpse(metabolite)
+head(metabolite)
+# Remove columns with more than 75% missing values by keeping the columns with less than 75% missing values
+clean_metabolite <- metabolite[, colSums(is.na(metabolite)) <= 0.75 * nrow(metabolite)]
+head(clean_metabolite)
+# Replace missing values with the median value of the existing values of that particular column
+clean_metabolite2 <- clean_metabolite %>% mutate_all(~ifelse(is.na(.x), median(.x, na.rm = TRUE), .x))
+glimpse(clean_metabolite2)
 ```
 
 
-6: Grad Students Only Please apply PCA on the processed metabolites data and create a scatter plot by using first two
-principal components in which points are colored based on the Label column. Please submit your code along with
-your figure in the same file.  
+6: Grad Students Only Please apply Principal Component Analysis (PCA) on the processed metabolites data and create a scatter plot by using first two principal components in which points are colored based on the Label column. Please submit your code along with your figure in the same file.  
 
 (If you are going to use R, you may need to use which(), is.na() functions and consider excluding those columns by name. For that purpose you may investigate %in% and -c(...) type of operations. You can also see examples of subsetting a dataframe below with their outputs. It’s also recommended to check tidyverse library.)
 
-
 ```{r 6}
-data <- read.table( header=T, text='
-  subject sex size
-  1 M 7
-  2 F 6
-  3 F 9
-  4 m 11')
+# Using R
+# Apply PCA on the processed metabolites data
+pca_metabolite <- clean_metabolite2 %>% select(Phe ,Pro,) %>% prcomp(scale = TRUE)
+print(pca_metabolite)
 
-subset(data, subject < 3)
-
-data[data$subject < 3, ]
-
-# Subset of particular rows and columns
-subset(data, subject < 3, select = -subject)
-
-subset(data, subject < 3, select = c(sex,size))
-
-subset(data, subject < 3, select = sex:size)
-
-data[data$subject < 3, c("sex","size")]
-
-# Logical AND of two conditions
-subset(data, subject < 3 & sex=="M")
-
-data[data$subject < 3 & data$sex=="M", ]
- 
-# Logical OR of two conditions
-subset(data, subject < 3 | sex=="M")
-
-data[data$subject < 3 | data$sex=="M", ]
- 
-# Condition based on transformed data
-subset(data, log2(size) > 3 )
- 
-data[log2(data$size) > 3, ]
- 
-# Subset if elements are in another vector
-subset(data, subject %in% c(1,3))
-
-data[data$subject %in% c(1,3), ]
- 
+# Create a scatter plot by using first two principal components
+pca_metabolite_df <- as.data.frame(pca_metabolite$x)
+pca_metabolite_df$Label <- clean_metabolite2$Label
+ggplot(data = pca_metabolite_df, aes(x = PC1, y = PC2, color = Label)) + geom_point()
 ```
