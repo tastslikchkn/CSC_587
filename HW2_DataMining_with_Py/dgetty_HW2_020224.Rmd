@@ -31,6 +31,7 @@ library(tidyr)
 import os
 import pandas as pd
 import numpy as np
+import scipy.stats as stats
 import math
 ```
 
@@ -123,7 +124,51 @@ print("The DataFrame is:")
 print(df, '\n')
 print("The Expected Values are:")
 print(expected_values)
+
+# Calculate the chi-square statistic
+chi_square = 0
+for row in ['Passed', 'Failed']:
+    for col in ['Attended', 'Skipped']:
+        observed = df.loc[row, col]
+        expected = expected_values.loc[row, col]
+        chi_square += ((observed - expected) ** 2) / expected
+print('\n',"The chi-square statistic is:", chi_square)
+
+# Calculate the degrees of freedom
+degrees_of_freedom = (len(row_totals) - 1) * (len(col_totals) - 1)
+print('\n',"The degrees of freedom is:", degrees_of_freedom)
+
+# chi-square distribution table
+# Define the significance level
+chialpha = 0.05
+
+# Create a list of degrees of freedom
+chidf = list(range(1, 10))
+
+# Calculate critical values for each degree of freedom
+critical_values = [stats.chi2.ppf(1 - chialpha, d) for d in chidf]
+
+# Create a DataFrame to display the table
+chisqr_ref_tbl = pd.DataFrame({'Degrees_of_Freedom': chidf, 'Critical_Value': critical_values})
+
+# Print the table
+print('\n',chisqr_ref_tbl)
+
+# Calculate the critical value
+critical_value = stats.chi2.ppf(1 - chialpha, degrees_of_freedom)
+print('\n',"The critical value is:", critical_value)
+
+# Determine whether to reject the null hypothesis
+if chi_square > critical_value:
+  print('\n',"Reject the null hypothesis")
+else:
+  print('\n',"Fail to reject the null hypothesis")
+
+
 ```
+
+The null hypothesis is rejected. There we can conclude that there is a statistically significant correlation between attendance and the likelihood of passing a class.
+
 
 4: In R, there is a built-in data frame called mtcars. Please calculate the correlation between mpg and wt attributes of mtcars by using cor() function. Then generate scatter plot based on these two attributes. Your scatter plot should be like the one below. You don’t need to submit the image, but R script should be submitted
 
