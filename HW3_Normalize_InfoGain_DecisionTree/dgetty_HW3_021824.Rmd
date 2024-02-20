@@ -1,0 +1,67 @@
+---
+title: "CSC 587 HW 3"
+author: "Daniel R. Getty"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+## Set r Environment
+```{r rsetup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE)
+# directory
+dir <- 'G:\\My Drive\\H Drive\\Course Work\\CERG-Data Science\\CSC_587_Advanced_Data_Mining\\HW\\HW3_Normalize_InfoGain_DecisionTree'
+# Set the working directory.
+setwd(dir)
+# Print the working directory.
+getwd()
+# load ggplot2 package
+library(ggplot2)
+# load ggplot2 package
+library(ggplot2)
+# load dplyr package
+library(dplyr)
+# load tidyr package
+library(tidyr)
+```
+
+## Set py Environment
+```{python psetup, include=TRUE}
+import os
+import pandas as pd
+import numpy as np
+import scipy.stats as stats
+import math
+```
+
+## Homework 3
+
+2. write a function in your preferred language which can take a data vector and do min-max normalization by transforming data onto a desired range. For example, it should be able get the age data above and map it between any two numbers. where a is an one-dimensional array) 
+
+```{python 2}
+# Using Python
+# Min-Max Normalization function
+def min_max_norm(data, new_min, new_max):
+    old_min, old_max = min(data), max(data)
+    xscaled = [new_min + (x - old_min) * (new_max - new_min) / (old_max - old_min) for x in data]
+    return xscaled
+
+# Create Data Vector of ages 
+age = [13, 15, 16, 16, 19, 20, 20, 21, 22, 22, 25, 25, 25, 25, 30, 33, 33, 35, 35, 35, 35, 36, 40, 45, 46, 52, 70]
+
+# Perform Min-Max Normalization on age
+new_min = 0
+new_max = 1
+
+# Call the min_max_norm function
+age_norm = min_max_norm(age, new_min, new_max)
+
+# zip the age and age_norm
+age_age_norm = list(zip(age, age_norm))
+
+# Print the normalized age
+print("(Age, Age_Norm)", age_age_norm)
+```
+
+
