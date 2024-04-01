@@ -1,5 +1,5 @@
 ---
-title: "CSC 587 HW 4"
+title: "CSC 587 MiniProjecty"
 author: "Daniel R. Getty"
 date: "`r Sys.Date()`"
 output:
@@ -35,67 +35,10 @@ import math
 from matplotlib import pyplot as plt
 ```
 
-## Homework 4
-
-1. Given a data tuple having the values ”systems”, ”26_30”, and ”46K_50K” for the attributes department, age, and salary,
-respectively, what would a naive Bayesian classification of the status according to the data above? Notice that Count
-column is NOT an attribute. It just tells how many times a row occurs in our database and status is our target variable.
 
 ```{python Problem 1, include=TRUE}
-# create a data frame
-data = {'department': ['sales', 'sales', 'sales', 'systems', 'systems', 'systems', 'systems', 'marketing', 'marketing', 'secretary', 'secretary'],'age': ['31_35', '26_30', '31_35', '21_25', '31_35', '26_30', '41_45', '36_40', '31_35', '46_50', '26_30'],'salary': ['46K_50K', '26K_30K', '31K_35K', '46K_50K', '66K_70K', '46K_50K', '66K_70K', '46K_50K', '41K_45K', '36K_40K', '26K_30K'], 'status': ['senior', 'junior', 'junior', 'junior', 'senior', 'junior', 'senior', 'senior', 'junior', 'senior', 'junior'],'count': [30, 40, 40, 20, 5, 3, 3, 10, 4, 4, 6]}
 
-df = pd.DataFrame(data)
 
-# df.head()
-print (df)
-
-# calculate the probability of each status
-sum_total = sum(df['count'])
-print("Total:",sum_total)
-
-senior_total = sum(df['count'][df['status'] == 'senior'])
-print("Senior Total:",senior_total)
-
-junior_total = sum(df['count'][df['status'] == 'junior'])
-print("Junior Total:",junior_total)
-
-PStaus_Senior = (senior_total / sum_total)
-
-print("P(Staus = Senior)",round(PStaus_Senior,2))
-
-PStaus_Junior = (junior_total / sum_total)
-
-print("P(Staus = Junior)",round(PStaus_Junior,2))
-
-# calculate the probability of systems department
-systems_total = sum(df['count'][df['department'] == 'systems'])
-print("Department Total:",systems_total)
-
-PDept_Systems = (systems_total / sum_total)
-print("P(Department = Systems)",round(PDept_Systems,2))
-
-# calculate the probability of age 26_30
-age_total = sum(df['count'][df['age'] == '26_30'])
-print("Age Total:",age_total)
-
-PAge_26_30 = (age_total / sum_total)
-print("P(Age = 26_30)",round(PAge_26_30,2))
-
-# calculate the probability of salary 46K_50K
-salary_total = sum(df['count'][df['salary'] == '46K_50K'])
-print("Salary Total:",salary_total)
-
-PSalary_46K_50K = (salary_total / sum_total)
-print("P(Salary = 46K_50K)",round(PSalary_46K_50K,2))
-
-# calculate the probability of status senior given department systems, age 26_30, and salary 46K_50K
-PStatus_Senior_x = (PDept_Systems * PAge_26_30 * PSalary_46K_50K * PStaus_Senior)
-print("P(Status = Senior | Department = Systems, Age = 26_30, Salary = 46K_50K)",round(PStatus_Senior_x,2))
-
-# calculate the probability of status junior given department systems, age 26_30, and salary 46K_50K
-PStatus_Junior_x = (PDept_Systems * PAge_26_30 * PSalary_46K_50K * PStaus_Junior)
-print("P(Status = Junior | Department = Systems, Age = 26_30, Salary = 46K_50K)",round(PStatus_Junior_x,2))
 ```
 
 2. split your diabetes data into two parts for training and testing purposes. Namely, reserve last 10 rows of the diabetes_train.csv for the test set. Then fit a SVM classifier on the bigger portion of this data and test it on these 10 rows you had reserved. Please feel free to modify existing codes. Notice that you’re not going to read diabetes_test.csv anymore since you’re going to split the bigger data. Please submit your Python code and your prediction results
