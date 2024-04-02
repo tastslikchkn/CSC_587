@@ -12,17 +12,6 @@ output:
 
 ```{r rsetup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = TRUE, results='asis')
-# directory
-# Print the working directory.
-getwd()
-# load ggplot2 package
-library(ggplot2)
-# load ggplot2 package
-library(ggplot2)
-# load dplyr package
-library(dplyr)
-# load tidyr package
-library(tidyr)
 ```
 
 
@@ -30,161 +19,89 @@ library(tidyr)
 import os
 import pandas as pd
 import numpy as np
-import scipy.stats as stats
-import math
-from matplotlib import pyplot as plt
+
+# print working directory
+os.getcwd()
+filename = 'labeledPackets50.csv'
+
+# make a array, li, to hold both initial data frames from the CSV files
+li = []
+li.append(pd.read_csv(filename))
+data = pd.concat(li, axis=0,ignore_index=True)
 ```
 
+```{python preprocess Data}
+# preprocess the data
+#import ipaddress
 
-```{python Problem 1, include=TRUE}
+# loop through all indexes to preprocessdata
+for index in range(len(data)):
+  # clean up responsetimetimemedian and responsetimetimeskewfrommedian NaN values
+  if np.isnan(data.loc[index,'ResponseTimeTimeMedian']):
+     data.at[index,'ResponseTimeTimeMedian'] = 0
+  if np.isnan(data.loc[index,'ResponseTimeTimeSkewFromMedian']):
+     data.at[index,'ResponseTimeTimeSkewFromMedian'] = 0
 
+# drop unwanted columns
+data = data.drop(['TimeStamp','SourceIP','DestinationIP','SourcePort','DestinationPort'],axis=1)
+# verify; check for NaN left
+for col in data.columns:
+      NaNsum = data.loc[:,col].isna().sum()
+      if NaNsum > 0:
+        print("Col: %s NaN: %d" % (col,NaNsum))
 
+# for col in data.columns:
+#       NaNsum = data.loc[:,col].isna().sum()
+#       if NaNsum > 0:
+#         print("Col: %s NaN: %d" % (col,NaNsum))
+#               
+row_count = data.shape[0]
+print("Row Count: %d" % row_count)
+print(data.head())
 ```
 
-2. split your diabetes data into two parts for training and testing purposes. Namely, reserve last 10 rows of the diabetes_train.csv for the test set. Then fit a SVM classifier on the bigger portion of this data and test it on these 10 rows you had reserved. Please feel free to modify existing codes. Notice that you’re not going to read diabetes_test.csv anymore since you’re going to split the bigger data. Please submit your Python code and your prediction results
+```{python Train Test SPlit}
+# get the data ready to be put into the decision tree/Naive Bayes/SVM
+from sklearn.model_selection import train_test_split
+from sklearn import tree
 
-```{python Problem 2, include=TRUE}
-# read the diabetes data
-diabetes = pd.read_csv('diabetes_train.csv')
+# training data
+cdata = data.drop('Label', axis=1)
+labels = data['Label']
 
-# split the data into training and testing reserves last 10 rows for testing
-test = diabetes.iloc[-10:]
-train = diabetes.iloc[:-10]
-
-print(test)
-print(train)
+# # preprocess
+# from sklearn.preprocessing import OneHotEncoder
+# from sklearn.compose import ColumnTransformer
+# from sklearn.preprocessing import StandardScaler
 
 
-# fit a SVM classifier
-from sklearn import svm
-clf = svm.SVC()
-clf.fit(train.iloc[:,:-1], train.iloc[:,-1])
+# split things up 80%/20%
+cdata_train, cdata_test, labels_train, labels_test = train_test_split(cdata,labels, test_size=0.2, random_state=1)
 
-# test the classifier
-prediction = clf.predict(test.iloc[:,:-1])
+print("Training Data Shape: %s" % str(cdata_train.shape))
+print("Testing Data Shape: %s" % str(cdata_test.shape))
+print("Training Labels Shape: %s" % str(labels_train.shape))
+print("Testing Labels Shape: %s" % str(labels_test.shape))
 
-# print the prediction results
-print("Predicted Results =",prediction)
-```
+# make the decision tree - unlimited depth
+cls = tree.DecisionTreeClassifier()
+cls.fit(cdata_train, labels_train)
 
-3.   
-    
-```{python Problem 3, include=TRUE}
-# create a data frame
-classes = ['a','b','c','d','e','f','g','h']
-data = {'x1': [2, 2, 8, 5, 7, 6, 1, 4],'x2': [10, 5, 4, 8, 5, 4, 2, 9]}
-P3_df = pd.DataFrame(data, index=classes)
-print(P3_df)
-
-# build a scatterplot of the df
-plt.figure(figsize=(10, 6))
-plt.scatter(P3_df['x1'], P3_df['x2'])
-plt.xlabel('x1')
-plt.ylabel('x2')
-plt.title('Scatterplot of x1 and x2')
-for i, txt in enumerate(classes):
-    plt.annotate(txt, (P3_df['x1'][i], P3_df['x2'][i]))
-
-plt.show()
-```
-(a) If h and c are selected as the initial centers for your k-means clustering, assign memberships for other points, and
-compute the means (centroids) of your initial clusters. You can use Manhattan distance.
-
-```{python Problem 3a, include=TRUE}
-# initial centers
-c1 = P3_df.loc['h']
-c2 = P3_df.loc['c']
-print(c1)
-print(c2)
-
-# assign memberships
-P3_df['d_c1'] = np.sqrt((P3_df['x1'] - c1['x1'])**2 + (P3_df['x2'] - c1['x2'])**2)
-P3_df['d_c2'] = np.sqrt((P3_df['x1'] - c2['x1'])**2 + (P3_df['x2'] - c2['x2'])**2)
-P3_df['mem'] = np.where(P3_df['d_c1'] < P3_df['d_c2'], 'c1', 'c2')
-
-print(P3_df)
-
-# build a visualization of the k-means clustering
-plt.figure(figsize=(10, 6))
-plt.scatter(P3_df['x1'], P3_df['x2'], c=P3_df['mem'].map({'c1': 'red', 'c2': 'blue'}))
-plt.scatter(c1['x1'], c1['x2'], color='red', marker='x', s=100)
-plt.scatter(c2['x1'], c2['x2'], color='blue', marker='x', s=100)
-plt.xlabel('x1')
-plt.ylabel('x2')
-plt.title('Scatterplot of x1 and x2 with k-means clustering')
-for i, txt in enumerate(classes):
-    plt.annotate(txt, (P3_df['x1'][i], P3_df['x2'][i]))
-
-plt.show()
+# make a second decision tree - max depth 10
+clsd10 = tree.DecisionTreeClassifier(max_depth=10)
+clsd10.fit(cdata_train, labels_train)
 
 ```
 
-(b) Based on the centroids you found above reassign the memberships by using Manhattan distance
+```{python Decision Tree}
+from sklearn.tree import export_graphviz
+from io import StringIO
+from IPython.display import Image
+import pydotplus
 
-```{python Problem 3b, include=TRUE}
-# reassign memberships
-c1 = P3_df[P3_df['mem'] == 'c1'][['x1', 'x2']].mean()
-c2 = P3_df[P3_df['mem'] == 'c2'][['x1', 'x2']].mean()
-
-
-P3_df['d_c1'] = np.sqrt((P3_df['x1'] - c1['x1'])**2 + (P3_df['x2'] - c1['x2'])**2)
-P3_df['d_c2'] = np.sqrt((P3_df['x1'] - c2['x1'])**2 + (P3_df['x2'] - c2['x2'])**2)
-P3_df['mem'] = np.where(P3_df['d_c1'] < P3_df['d_c2'], 'c1', 'c2')
-
-print(P3_df)
-
-# build a visualization of the reassigned k-means clustering
-plt.figure(figsize=(10, 6))
-plt.scatter(P3_df['x1'], P3_df['x2'], c=P3_df['mem'].map({'c1': 'red', 'c2': 'blue'}))
-plt.scatter(c1['x1'], c1['x2'], color='red', marker='x', s=100)
-plt.scatter(c2['x1'], c2['x2'], color='blue', marker='x', s=100)
-plt.xlabel('x1')
-plt.ylabel('x2')
-plt.title('Scatterplot of x1 and x2 with reassigned k-means clustering')
-for i, txt in enumerate(classes):
-    plt.annotate(txt, (P3_df['x1'][i], P3_df['x2'][i]))
-    
-plt.show()
-```
-
-
-4. Given the distance matrix below answer the following questions. Notice that this is a distance matrix, meaning the distance between any pair of points can be found by checking the corresponding cell.
-
-```{python Problem 4, include=TRUE}
-# create a data frame
-classes = ['b','c','d','e','f','g','h']
-data = {'a': [5, 8, 4, 7, 7, 8, 2],'b': [0, 6, 4, 5, 4, 3, 4],'c': [0, 0, 5, 1, 2, 7, 6],'d': [0, 0, 0, 4, 4, 7, 1],'e': [0,0, 0, 0, 1, 7, 5],'f': [0, 0, 0, 0, 0, 5, 5],'g': [0, 0, 0, 0, 0, 0, 8]}
-P4_df = pd.DataFrame(data, index=classes)
-print(P4_df)
-
-
-```
-
-(a) Apply the hierarchical clustering algorithm with single linkage to the data above. Draw the final dendrogram. 
-
-```{python Problem 4a, include=TRUE}
-# apply hierarchical clustering with single linkage
-from scipy.cluster.hierarchy import linkage, dendrogram
-Z = linkage(P4_df, 'single')
-plt.figure(figsize=(10, 6))
-dendrogram(Z, labels=classes)
-plt.title('Dendrogram of hierarchical clustering with single linkage')
-plt.show()
-
-```
-
-(b) Determine whether a point is core based on eps = 6 and 'minPts' = 2. (Recall that a point p is a core point if at least 'minPts' points are within distance eps of it (including p).
-
-```{python Problem 4b, include=TRUE}
-# determine core points
-eps = 6
-minPts = 2
-core_points = []
-for i in range(len(P4_df)):
-    if sum(P4_df.iloc[i] <= eps) >= minPts:
-        core_points.append(classes[i])
-        
-print("Core Points:",core_points)
-
-
+# make the first unlimited depth tree
+dot_data = StringIO()
+export_graphviz(cls, out_file=dot_data, filled=True, rounded=True, special_characters=True, feature_names = cdata.columns, class_names=['DoH','nonDoH'])
+graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
+Image(graph.create_png())
 ```
