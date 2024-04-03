@@ -10,21 +10,9 @@ output:
       in_header: logo.html
 ---
 
-```{r rsetup, include=FALSE}
+```{r rsetup, echo=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = TRUE, results='asis')
-# directory
-# Print the working directory.
-getwd()
-# load ggplot2 package
-library(ggplot2)
-# load ggplot2 package
-library(ggplot2)
-# load dplyr package
-library(dplyr)
-# load tidyr package
-library(tidyr)
 ```
-
 
 ```{python psetup, include=FALSE}
 import os
@@ -41,14 +29,20 @@ from matplotlib import pyplot as plt
 respectively, what would a naive Bayesian classification of the status according to the data above? Notice that Count
 column is NOT an attribute. It just tells how many times a row occurs in our database and status is our target variable.
 
-```{python Problem 1, include=TRUE}
+```{python Problem 1 Data, include=TRUE}
 # create a data frame
 data = {'department': ['sales', 'sales', 'sales', 'systems', 'systems', 'systems', 'systems', 'marketing', 'marketing', 'secretary', 'secretary'],'age': ['31_35', '26_30', '31_35', '21_25', '31_35', '26_30', '41_45', '36_40', '31_35', '46_50', '26_30'],'salary': ['46K_50K', '26K_30K', '31K_35K', '46K_50K', '66K_70K', '46K_50K', '66K_70K', '46K_50K', '41K_45K', '36K_40K', '26K_30K'], 'status': ['senior', 'junior', 'junior', 'junior', 'senior', 'junior', 'senior', 'senior', 'junior', 'senior', 'junior'],'count': [30, 40, 40, 20, 5, 3, 3, 10, 4, 4, 6]}
 
 df = pd.DataFrame(data)
+print(df.to_markdown(tablefmt="grid"))
+```
+
+
+
+```{python Problem 1, include=TRUE}
 
 # df.head()
-print (df)
+# print (df)
 
 # calculate the probability of each status
 sum_total = sum(df['count'])
@@ -98,6 +92,7 @@ PStatus_Junior_x = (PDept_Systems * PAge_26_30 * PSalary_46K_50K * PStaus_Junior
 print("P(Status = Junior | Department = Systems, Age = 26_30, Salary = 46K_50K)",round(PStatus_Junior_x,2))
 ```
 
+
 2. split your diabetes data into two parts for training and testing purposes. Namely, reserve last 10 rows of the diabetes_train.csv for the test set. Then fit a SVM classifier on the bigger portion of this data and test it on these 10 rows you had reserved. Please feel free to modify existing codes. Notice that you’re not going to read diabetes_test.csv anymore since you’re going to split the bigger data. Please submit your Python code and your prediction results
 
 ```{python Problem 2, include=TRUE}
@@ -108,9 +103,15 @@ diabetes = pd.read_csv('diabetes_train.csv')
 test = diabetes.iloc[-10:]
 train = diabetes.iloc[:-10]
 
-print(test)
-print(train)
+print("Test Data")
+print(test.to_markdown(tablefmt="grid"))
 
+print("\n")
+print("Train Data")
+dfhead = train.head()
+print(dfhead.to_markdown(tablefmt="grid"))
+print("\n")
+# print(train.to_markdown(tablefmt="grid"))
 
 # fit a SVM classifier
 from sklearn import svm
@@ -119,9 +120,14 @@ clf.fit(train.iloc[:,:-1], train.iloc[:,-1])
 
 # test the classifier
 prediction = clf.predict(test.iloc[:,:-1])
-
+prediction = pd.DataFrame(prediction, columns=['Prediction'])
 # print the prediction results
-print("Predicted Results =",prediction)
+# print("Predicted Results =",prediction)
+print(prediction.to_markdown())
+
+
+
+
 ```
 
 3.   
@@ -131,7 +137,10 @@ print("Predicted Results =",prediction)
 classes = ['a','b','c','d','e','f','g','h']
 data = {'x1': [2, 2, 8, 5, 7, 6, 1, 4],'x2': [10, 5, 4, 8, 5, 4, 2, 9]}
 P3_df = pd.DataFrame(data, index=classes)
-print(P3_df)
+# print(P3_df)
+print(P3_df.to_markdown(tablefmt="grid"))
+
+
 
 # build a scatterplot of the df
 plt.figure(figsize=(10, 6))
@@ -159,7 +168,8 @@ P3_df['d_c1'] = np.sqrt((P3_df['x1'] - c1['x1'])**2 + (P3_df['x2'] - c1['x2'])**
 P3_df['d_c2'] = np.sqrt((P3_df['x1'] - c2['x1'])**2 + (P3_df['x2'] - c2['x2'])**2)
 P3_df['mem'] = np.where(P3_df['d_c1'] < P3_df['d_c2'], 'c1', 'c2')
 
-print(P3_df)
+# print(P3_df)
+print(P3_df.to_markdown(tablefmt="grid"))
 
 # build a visualization of the k-means clustering
 plt.figure(figsize=(10, 6))
@@ -188,7 +198,8 @@ P3_df['d_c1'] = np.sqrt((P3_df['x1'] - c1['x1'])**2 + (P3_df['x2'] - c1['x2'])**
 P3_df['d_c2'] = np.sqrt((P3_df['x1'] - c2['x1'])**2 + (P3_df['x2'] - c2['x2'])**2)
 P3_df['mem'] = np.where(P3_df['d_c1'] < P3_df['d_c2'], 'c1', 'c2')
 
-print(P3_df)
+# print(P3_df)
+print(P3_df.to_markdown(tablefmt="grid"))
 
 # build a visualization of the reassigned k-means clustering
 plt.figure(figsize=(10, 6))
@@ -212,8 +223,8 @@ plt.show()
 classes = ['b','c','d','e','f','g','h']
 data = {'a': [5, 8, 4, 7, 7, 8, 2],'b': [0, 6, 4, 5, 4, 3, 4],'c': [0, 0, 5, 1, 2, 7, 6],'d': [0, 0, 0, 4, 4, 7, 1],'e': [0,0, 0, 0, 1, 7, 5],'f': [0, 0, 0, 0, 0, 5, 5],'g': [0, 0, 0, 0, 0, 0, 8]}
 P4_df = pd.DataFrame(data, index=classes)
-print(P4_df)
-
+# print(P4_df)
+print(P4_df.to_markdown(tablefmt="grid"))
 
 ```
 
@@ -224,10 +235,9 @@ print(P4_df)
 from scipy.cluster.hierarchy import linkage, dendrogram
 Z = linkage(P4_df, 'single')
 plt.figure(figsize=(10, 6))
-dendrogram(Z, labels=classes)
+dendrogram(Z, p=30, truncate_mode=None, color_threshold=None, get_leaves=True, orientation='top', labels=classes, count_sort=False, distance_sort=False, show_leaf_counts=True, no_plot=False, no_labels=False, leaf_font_size=None, leaf_rotation=None, leaf_label_func=None, show_contracted=False, link_color_func=None, ax=None, above_threshold_color='C0')
 plt.title('Dendrogram of hierarchical clustering with single linkage')
 plt.show()
-
 ```
 
 (b) Determine whether a point is core based on eps = 6 and 'minPts' = 2. (Recall that a point p is a core point if at least 'minPts' points are within distance eps of it (including p).
@@ -242,6 +252,4 @@ for i in range(len(P4_df)):
         core_points.append(classes[i])
         
 print("Core Points:",core_points)
-
-
 ```
