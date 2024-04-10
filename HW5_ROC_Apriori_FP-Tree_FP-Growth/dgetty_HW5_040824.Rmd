@@ -1,0 +1,90 @@
+---
+title: "CSC 587 HW 5"
+author: "Daniel R. Getty"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: 
+    css: "style.css"
+    includes:
+      in_header: logo.html
+---
+
+```{r rsetup, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = TRUE, results='asis')
+```
+
+```{python psetup, include=FALSE}
+import os
+import pandas as pd
+import numpy as np
+import scipy.stats as stats
+import math
+from matplotlib import pyplot as plt
+```
+
+## Homework 5
+
+
+
+```{python Problem 1 Data, include=TRUE}
+# create a data frame
+
+data = {'Tuple #': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        'Class': ['p', 'n', 'p', 'p', 'n', 'p', 'n', 'n', 'n', 'p'],
+        'Prob': [0.95, 0.85, 0.78, 0.66, 0.6, 0.55, 0.53, 0.52, 0.51, 0.4],
+        'TP': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'FN': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'FP': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'TN': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'TPR': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        'FPR': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+```
+
+
+# 1. Draw the ROC curve based on the table below and fill the empty columns based on threshold at each step.
+Tuple # Class Prob TP FN FP TN TPR FPR
+1 p 0.95
+2 n 0.85
+3 p 0.78
+4 p 0.66
+5 n 0.6
+6 p 0.55
+7 n 0.53
+8 n 0.52
+9 n 0.51
+10 p 0.4
+
+```{python Problem 1, include=TRUE}
+df = pd.DataFrame(data)
+df.to_csv('roc.xlsx', index=False)
+
+```
+
+
+TID Basket
+T1 A, B, E
+T2 B, D
+T3 B, C
+T4 A, B, D
+T5 A, C
+T6 B, C
+T7 A, C
+T8 A, B, C, E
+T9 A, B, C
+
+Refer to the table above for questions 2 through 5 and suppose the minimum support is 2.
+2. Compute the confidences for the following rules.
+(a) {A, B} ) E
+(b) A ) {B, E}
+
+
+3. Apply the Apriori procedure by using join operations as described on slide (see slide1) #15. You need to report all
+frequent k-itemsets. 
+
+4. Draw the FP-Tree (see slide #28 in 3).
+
+5. Import this table by preparing an appropriate input format for Weka and run Apriori algorithm. Please use either .arff
+or csv format by inspecting sample Weka files. Please report the association rules you find.
+
+6. Using Weka, implement Apriori and FP-Growth algorithms on Supermarket data, which is a sample data set coming with Weka installation. You can find it under Weka folder in your system. Please report your results with screen shots. You don’t have to report all. Top of the results is enough for this question.
