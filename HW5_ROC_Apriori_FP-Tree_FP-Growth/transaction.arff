@@ -1,0 +1,15 @@
+@relation transaction
+
+@attribute id numeric
+@attribute A {t}
+@attribute B {t}
+@attribute C {t}
+@attribute D {t}
+@attribute E {t}
+
+@data
+1,t,t,?,t,?
+2,?,t,?,t,?
+3,?,t,t,?,?
+4,t,?,t,t,?
+5,?,t,t,?,t

@@ -1,0 +1,67 @@
+@relation transaction
+
+@attribute id numeric
+@attribute A {t}
+@attribute B {t}
+@attribute C {t}
+@attribute D {t}
+@attribute E {t}
+
+@data
+1,t,t,?,?,t
+2,?,t,?,t,?
+3,?,t,t,?,?
+4,t,t,?,t,?
+5,t,?,t,?,?
+6,?,t,t,?,?
+7,t,?,t,?,?
+8,t,t,t,?,t
+9,t,t,t,?,?
+
+
+
+%=== Run information ===
+
+%Scheme:       weka.associations.Apriori -N 10 -T 0 -C 0.9 -D 0.05 -U 1.0 -M 0.1 -S -1.0 -c -1
+%Relation:     transaction-weka.filters.unsupervised.attribute.Remove-R1
+%Instances:    9
+%Attributes:   5
+%              A
+%              B
+%              C
+%              D
+%              E
+%=== Associator model (full training set) ===
+%
+%
+%Apriori
+%=======
+%
+%Minimum support: 0.16 (1 instances)
+%Minimum metric <confidence>: 0.9
+%Number of cycles performed: 17
+%
+%Generated sets of large itemsets:
+%
+%Size of set of large itemsets L(1): 5
+%
+%Size of set of large itemsets L(2): 8
+%
+%Size of set of large itemsets L(3): 5
+%
+%Size of set of large itemsets L(4): 1
+%
+%Best rules found:
+%
+% 1. E=t 2 ==> A=t 2    <conf:(1)> lift:(1.5) lev:(0.07) [0] conv:(0.67)
+% 2. D=t 2 ==> B=t 2    <conf:(1)> lift:(1.29) lev:(0.05) [0] conv:(0.44)
+% 3. E=t 2 ==> B=t 2    <conf:(1)> lift:(1.29) lev:(0.05) [0] conv:(0.44)
+% 4. B=t E=t 2 ==> A=t 2    <conf:(1)> lift:(1.5) lev:(0.07) [0] conv:(0.67)
+% 5. A=t E=t 2 ==> B=t 2    <conf:(1)> lift:(1.29) lev:(0.05) [0] conv:(0.44)
+% 6. E=t 2 ==> A=t B=t 2    <conf:(1)> lift:(2.25) lev:(0.12) [1] conv:(1.11)
+% 7. A=t D=t 1 ==> B=t 1    <conf:(1)> lift:(1.29) lev:(0.02) [0] conv:(0.22)
+% 8. C=t E=t 1 ==> A=t 1    <conf:(1)> lift:(1.5) lev:(0.04) [0] conv:(0.33)
+% 9. C=t E=t 1 ==> B=t 1    <conf:(1)> lift:(1.29) lev:(0.02) [0] conv:(0.22)
+%10. B=t C=t E=t 1 ==> A=t 1    <conf:(1)> lift:(1.5) lev:(0.04) [0] conv:(0.33)
+
+
