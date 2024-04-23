@@ -3,11 +3,11 @@ title: "CSC 587 HW 4"
 author: "Daniel R. Getty"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   html_document: 
     css: "style.css"
     includes:
       in_header: logo.html
+  pdf_document: default
 ---
 
 ```{r rsetup, echo=FALSE}
@@ -54,13 +54,13 @@ print("Senior Total:",senior_total)
 junior_total = sum(df['count'][df['status'] == 'junior'])
 print("Junior Total:",junior_total)
 
-PStaus_Senior = (senior_total / sum_total)
+PStatus_Senior = (senior_total / sum_total)
 
-print("P(Staus = Senior)",round(PStaus_Senior,2))
+print("P(Staus = Senior)",round(PStatus_Senior,2))
 
-PStaus_Junior = (junior_total / sum_total)
+PStatus_Junior = (junior_total / sum_total)
 
-print("P(Staus = Junior)",round(PStaus_Junior,2))
+print("P(Staus = Junior)",round(PStatus_Junior,2))
 
 # calculate the probability of systems department
 systems_total = sum(df['count'][df['department'] == 'systems'])
@@ -84,11 +84,11 @@ PSalary_46K_50K = (salary_total / sum_total)
 print("P(Salary = 46K_50K)",round(PSalary_46K_50K,2))
 
 # calculate the probability of status senior given department systems, age 26_30, and salary 46K_50K
-PStatus_Senior_x = (PDept_Systems * PAge_26_30 * PSalary_46K_50K * PStaus_Senior)
+PStatus_Senior_x = (PDept_Systems * PAge_26_30 * PSalary_46K_50K * PStatus_Senior * PStatus_Senior)
 print("P(Status = Senior | Department = Systems, Age = 26_30, Salary = 46K_50K)",round(PStatus_Senior_x,2))
 
 # calculate the probability of status junior given department systems, age 26_30, and salary 46K_50K
-PStatus_Junior_x = (PDept_Systems * PAge_26_30 * PSalary_46K_50K * PStaus_Junior)
+PStatus_Junior_x = (PDept_Systems * PAge_26_30 * PSalary_46K_50K * PStatus_Junior * PStatus_Junior)
 print("P(Status = Junior | Department = Systems, Age = 26_30, Salary = 46K_50K)",round(PStatus_Junior_x,2))
 ```
 
@@ -163,10 +163,15 @@ c2 = P3_df.loc['c']
 print(c1)
 print(c2)
 
-# assign memberships
-P3_df['d_c1'] = np.sqrt((P3_df['x1'] - c1['x1'])**2 + (P3_df['x2'] - c1['x2'])**2)
-P3_df['d_c2'] = np.sqrt((P3_df['x1'] - c2['x1'])**2 + (P3_df['x2'] - c2['x2'])**2)
+# assign memberships using manhattan distance
+
+P3_df['d_c1'] = np.abs(P3_df['x1'] - c1['x1']) + np.abs(P3_df['x2'] - c1['x2'])
+P3_df['d_c2'] = np.abs(P3_df['x1'] - c2['x1']) + np.abs(P3_df['x2'] - c2['x2'])
 P3_df['mem'] = np.where(P3_df['d_c1'] < P3_df['d_c2'], 'c1', 'c2')
+
+# P3_df['d_c1'] = np.sqrt((P3_df['x1'] - c1['x1'])**2 + (P3_df['x2'] - c1['x2'])**2)
+# P3_df['d_c2'] = np.sqrt((P3_df['x1'] - c2['x1'])**2 + (P3_df['x2'] - c2['x2'])**2)
+# P3_df['mem'] = np.where(P3_df['d_c1'] < P3_df['d_c2'], 'c1', 'c2')
 
 # print(P3_df)
 print(P3_df.to_markdown(tablefmt="grid"))
@@ -193,10 +198,13 @@ plt.show()
 c1 = P3_df[P3_df['mem'] == 'c1'][['x1', 'x2']].mean()
 c2 = P3_df[P3_df['mem'] == 'c2'][['x1', 'x2']].mean()
 
-
-P3_df['d_c1'] = np.sqrt((P3_df['x1'] - c1['x1'])**2 + (P3_df['x2'] - c1['x2'])**2)
-P3_df['d_c2'] = np.sqrt((P3_df['x1'] - c2['x1'])**2 + (P3_df['x2'] - c2['x2'])**2)
+P3_df['d_c1'] = np.abs(P3_df['x1'] - c1['x1']) + np.abs(P3_df['x2'] - c1['x2'])
+P3_df['d_c2'] = np.abs(P3_df['x1'] - c2['x1']) + np.abs(P3_df['x2'] - c2['x2'])
 P3_df['mem'] = np.where(P3_df['d_c1'] < P3_df['d_c2'], 'c1', 'c2')
+
+# P3_df['d_c1'] = np.sqrt((P3_df['x1'] - c1['x1'])**2 + (P3_df['x2'] - c1['x2'])**2)
+# P3_df['d_c2'] = np.sqrt((P3_df['x1'] - c2['x1'])**2 + (P3_df['x2'] - c2['x2'])**2)
+# P3_df['mem'] = np.where(P3_df['d_c1'] < P3_df['d_c2'], 'c1', 'c2')
 
 # print(P3_df)
 print(P3_df.to_markdown(tablefmt="grid"))
